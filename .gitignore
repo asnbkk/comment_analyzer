@@ -52,16 +52,18 @@ violence_ft/
 
 # Data files
 *.jsonl
-*.csv
 !requirements.txt
 comments_*.jsonl
 videos.jsonl
-train.csv
-validation.csv
-unseen.csv
 comments_with_labels.csv
 test_predictions_comparison.csv
 validation_predictions_comparison.csv
+
+# Database backups
+backup_*.sql
+backup_*.json
+db_backup_*.sql
+db_backup_*.json
 
 # Logs
 *.log
