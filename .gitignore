@@ -1,0 +1,84 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+yt_admin.db
+
+# Model files (too large for git)
+model_violence_ft/
+violence_ft/
+*.safetensors
+*.pt
+*.pth
+*.bin
+*.ckpt
+
+# Data files
+*.jsonl
+*.csv
+!requirements.txt
+comments_*.jsonl
+videos.jsonl
+train.csv
+validation.csv
+unseen.csv
+comments_with_labels.csv
+test_predictions_comparison.csv
+validation_predictions_comparison.csv
+
+# Logs
+*.log
+uvicorn.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
