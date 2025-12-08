@@ -55,7 +55,6 @@ violence_ft/
 !requirements.txt
 comments_*.jsonl
 videos.jsonl
-comments_with_labels.csv
 test_predictions_comparison.csv
 validation_predictions_comparison.csv
 
