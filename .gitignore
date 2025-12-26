@@ -68,7 +68,7 @@ rubert_tiny_kaz_multi_best/
 violence_ft/
 
 # Data files (большие CSV, JSONL)
-# *.csv
+*.csv
 *.jsonl
 *.json
 !requirements.txt

@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, List, Literal, Optional
 
 import numpy as np
 import pandas as pd
@@ -21,7 +21,9 @@ class ServiceConfig:
     model_ru_checkpoint: str = os.getenv(
         "MODEL_RU_CHECKPOINT", "cointegrated/rubert-tiny-toxicity"
     )
-    model_kz_path: Path = Path(os.getenv("MODEL_KZ_PATH", "/models/toxicity/kaz_roberta_toxic_kz"))
+    model_kz_path: Path = Path(
+        os.getenv("MODEL_KZ_PATH", "/models/toxicity/kaz_roberta_toxic_kz")
+    )
     device: str = os.getenv("DEVICE", "auto")  # auto, cpu, cuda
     batch_size: int = int(os.getenv("BATCH_SIZE", "64"))
     max_length: int = int(os.getenv("MAX_LENGTH", "512"))
@@ -55,15 +57,17 @@ def _clean_texts(texts: List[Any]) -> List[str]:
 # ─────────────────────────────────────────────────────────────
 class ToxicityRequest(BaseModel):
     text: str = Field(..., description="Text to analyze for toxicity")
-    lang: Optional[Literal["ru", "kk", "auto"]] = Field(
-        "auto", description="Language: 'ru' for Russian, 'kk' for Kazakh, 'auto' for auto-detect"
+    lang: Literal["ru", "kk"] = Field(
+        ...,
+        description="Language: 'ru' for Russian, 'kk' for Kazakh",
     )
 
 
 class ToxicityBatchRequest(BaseModel):
     texts: List[str] = Field(..., min_length=1, description="List of texts (batch)")
-    lang: Optional[Literal["ru", "kk", "auto"]] = Field(
-        "auto", description="Language: 'ru' for Russian, 'kk' for Kazakh, 'auto' for auto-detect"
+    lang: Literal["ru", "kk"] = Field(
+        ...,
+        description="Language: 'ru' for Russian, 'kk' for Kazakh",
     )
 
 
@@ -77,8 +81,6 @@ class ToxicityAspects(BaseModel):
 
 class ToxicityResponse(BaseModel):
     toxicity_score: float = Field(..., description="Aggregated toxicity score")
-    aspects: ToxicityAspects = Field(..., description="Individual aspect scores")
-    lang: str = Field(..., description="Detected or specified language")
 
 
 class ToxicityBatchResponse(BaseModel):
@@ -212,36 +214,10 @@ class UnifiedToxicityAnalyzer:
         self.analyzer_ru = analyzer_ru
         self.analyzer_kz = analyzer_kz
 
-    def _detect_language_simple(self, text: str) -> str:
-        """
-        Простая эвристика для определения языка.
-        Если есть казахские специфические символы - казахский, иначе русский.
-        """
-        kazakh_chars = set("әғқңөұүһіӘҒҚҢӨҰҮҺІ")
-        text_chars = set(text.lower())
-
-        kazakh_count = len(text_chars & kazakh_chars)
-        total_letters = len([c for c in text if c.isalpha()])
-
-        if kazakh_count > 0 and total_letters > 0:
-            kazakh_ratio = kazakh_count / total_letters
-            if kazakh_ratio > 0.05:  # Если больше 5% казахских символов
-                return "kk"
-
-        return "ru"
-
-    def analyze_one(
-        self, text: str, lang: str = "auto"
-    ) -> ToxicityResponse:
+    def analyze_one(self, text: str, lang: str) -> ToxicityResponse:
         """Анализ одного текста"""
-        # Определяем язык
-        if lang == "auto":
-            detected_lang = self._detect_language_simple(text)
-        else:
-            detected_lang = lang
-
         # Выбираем анализатор
-        if detected_lang == "kk":
+        if lang == "kk":
             if self.analyzer_kz is None:
                 raise HTTPException(
                     status_code=503, detail="Kazakh model is not loaded"
@@ -256,64 +232,36 @@ class UnifiedToxicityAnalyzer:
         # Агрегированный скор
         toxicity_score = analyzer._aggregate_score(proba)
 
-        # Аспекты
-        aspects = ToxicityAspects(
-            toxic=float(proba[0]),
-            obscene=float(proba[1]),
-            threat=float(proba[2]),
-            insult=float(proba[3]),
-            hate=float(proba[4]),
-        )
-
         return ToxicityResponse(
             toxicity_score=toxicity_score,
-            aspects=aspects,
-            lang=detected_lang,
         )
 
-    def analyze_batch(
-        self, texts: List[str], lang: str = "auto"
-    ) -> ToxicityBatchResponse:
+    def analyze_batch(self, texts: List[str], lang: str) -> ToxicityBatchResponse:
         """Анализ батча текстов"""
         results = []
 
-        # Если язык указан явно, используем один анализатор для всех
-        if lang != "auto":
-            if lang == "kk":
-                if self.analyzer_kz is None:
-                    raise HTTPException(
-                        status_code=503, detail="Kazakh model is not loaded"
-                    )
-                analyzer = self.analyzer_kz
-            else:
-                analyzer = self.analyzer_ru
-
-            # Обрабатываем батчами
-            for i in range(0, len(texts), analyzer.batch_size):
-                batch_texts = texts[i : i + analyzer.batch_size]
-                proba_batch = analyzer._predict_batch(batch_texts)
-
-                for proba in proba_batch:
-                    toxicity_score = analyzer._aggregate_score(proba)
-                    aspects = ToxicityAspects(
-                        toxic=float(proba[0]),
-                        obscene=float(proba[1]),
-                        threat=float(proba[2]),
-                        insult=float(proba[3]),
-                        hate=float(proba[4]),
-                    )
-                    results.append(
-                        ToxicityResponse(
-                            toxicity_score=toxicity_score,
-                            aspects=aspects,
-                            lang=lang,
-                        )
-                    )
+        # Выбираем анализатор
+        if lang == "kk":
+            if self.analyzer_kz is None:
+                raise HTTPException(
+                    status_code=503, detail="Kazakh model is not loaded"
+                )
+            analyzer = self.analyzer_kz
         else:
-            # Автоопределение языка для каждого текста
-            for text in texts:
-                result = self.analyze_one(text, lang="auto")
-                results.append(result)
+            analyzer = self.analyzer_ru
+
+        # Обрабатываем батчами
+        for i in range(0, len(texts), analyzer.batch_size):
+            batch_texts = texts[i : i + analyzer.batch_size]
+            proba_batch = analyzer._predict_batch(batch_texts)
+
+            for proba in proba_batch:
+                toxicity_score = analyzer._aggregate_score(proba)
+                results.append(
+                    ToxicityResponse(
+                        toxicity_score=toxicity_score,
+                    )
+                )
 
         return ToxicityBatchResponse(results=results)
 
@@ -322,9 +270,7 @@ class UnifiedToxicityAnalyzer:
 # FastAPI app
 # ─────────────────────────────────────────────────────────────
 cfg = ServiceConfig()
-app = FastAPI(
-    title="Toxicity Analysis Service (RU/KK)", version="1.0.0"
-)
+app = FastAPI(title="Toxicity Analysis Service (RU/KK)", version="1.0.0")
 
 analyzer: Optional[UnifiedToxicityAnalyzer] = None
 
@@ -374,7 +320,11 @@ def health():
         },
         "model_ru_checkpoint": cfg.model_ru_checkpoint,
         "model_kz_path": str(cfg.model_kz_path),
-        "device": str(analyzer.analyzer_ru.device) if analyzer and analyzer.analyzer_ru else None,
+        "device": (
+            str(analyzer.analyzer_ru.device)
+            if analyzer and analyzer.analyzer_ru
+            else None
+        ),
         "batch_size": cfg.batch_size,
         "max_length": cfg.max_length,
     }
@@ -394,4 +344,3 @@ def analyze_batch(req: ToxicityBatchRequest):
         raise HTTPException(status_code=503, detail="Models are not loaded")
 
     return analyzer.analyze_batch(req.texts, lang=req.lang)
-
