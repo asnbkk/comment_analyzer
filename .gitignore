@@ -49,16 +49,16 @@ venv.bak/
 .env.*.local
 
 # Models (большие файлы)
-# *.pkl
-# *.pt
-# *.bin
-# *.safetensors
-# models/**/*.pkl
-# models/**/*.pt
-# models/**/*.bin
-# models/**/*.safetensors
-# !models/**/meta.json
-# !models/**/config.json
+*.pkl
+*.pt
+*.bin
+*.safetensors
+models/**/*.pkl
+models/**/*.pt
+models/**/*.bin
+models/**/*.safetensors
+!models/**/meta.json
+!models/**/config.json
 
 # Model checkpoints
 checkpoints/
