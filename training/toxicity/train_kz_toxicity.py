@@ -35,7 +35,7 @@ from transformers import (
 @dataclass(frozen=True)
 class TrainConfig:
     # Input data
-    golden_csv: Path = Path("../../golden_annotated_merged.csv")
+    golden_csv: Path = Path("../../data/golden_annotated_merged.csv")
     
     # Model
     base_model: str = "kz-transformers/kaz-roberta-conversational"
@@ -71,7 +71,7 @@ def resolve_cfg() -> TrainConfig:
     base_dir = Path(__file__).resolve().parent  # training/toxicity
     
     golden_csv = Path(
-        os.getenv("GOLDEN_CSV", str(base_dir / "../../golden_annotated_merged.csv"))
+        os.getenv("GOLDEN_CSV", str(base_dir / "../../data/golden_annotated_merged.csv"))
     ).resolve()
     
     model_out_dir = Path(

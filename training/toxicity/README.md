@@ -30,7 +30,7 @@ python train_kz_toxicity.py
 
 ### Переменные окружения
 
-- `GOLDEN_CSV` - путь к файлу с размеченными данными (по умолчанию: `../../golden_annotated_merged.csv`)
+- `GOLDEN_CSV` - путь к файлу с размеченными данными (по умолчанию: `../../data/golden_annotated_merged.csv`)
 - `BASE_MODEL` - базовая модель для fine-tuning (по умолчанию: `kz-transformers/kaz-roberta-conversational`)
 - `MODEL_OUT_DIR` - директория для сохранения модели (по умолчанию: `../../models/toxicity/kaz_roberta_toxic_kz`)
 - `CHECKPOINT_DIR` - директория для сохранения checkpoint'ов (по умолчанию: `../../models/toxicity/checkpoints`)
@@ -46,7 +46,7 @@ python train_kz_toxicity.py
 
 ## Входные данные
 
-Скрипт ожидает CSV файл (`golden_annotated_merged.csv`) со следующими колонками:
+Скрипт ожидает CSV файл (`data/golden_annotated_merged.csv`) со следующими колонками:
 
 - `text_original` - текст комментария
 - `is_kazakh_model` - флаг казахского языка (True/False)
@@ -79,7 +79,7 @@ python train_kz_toxicity.py
 ## Пример вывода
 
 ```
-[info] Loading data from ../../golden_annotated_merged.csv
+[info] Loading data from ../../data/golden_annotated_merged.csv
 [info] Filtered to Kazakh comments: 3004 rows
 [info] Final dataset size: 3004
 [info] Label distribution:
