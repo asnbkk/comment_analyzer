@@ -12,3 +12,17 @@ services:
     volumes:
       - ./models/lang_detect:/models:ro
     restart: unless-stopped
+
+  toxicity:
+    build: ./services/toxicity
+    ports:
+      - "8001:8001"
+    environment:
+      MODEL_RU_CHECKPOINT: cointegrated/rubert-tiny-toxicity
+      MODEL_KZ_PATH: /models/toxicity/kaz_roberta_toxic_kz
+      DEVICE: auto
+      BATCH_SIZE: "64"
+      MAX_LENGTH: "512"
+    volumes:
+      - ./models/toxicity:/models/toxicity:ro
+    restart: unless-stopped

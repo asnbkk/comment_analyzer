@@ -11,10 +11,10 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 
-ENV_PATH = Path(".env")
+ENV_PATH = Path("/Users/assan/Desktop/coding/bkn_sn_analysis/.env")
 VIDEO_ID = "t_HtRmlKCVI"
 ORDER = "relevance"  # "time" or "relevance"
-OUTPUT_PATH = Path("comments_youtube_api.jsonl")
+OUTPUT_PATH = Path("/Users/assan/Desktop/coding/bkn_sn_analysis/comments_youtube_api.jsonl")
 
 
 def load_env_file(path: Path) -> None:

@@ -7,23 +7,10 @@ from typing import Any, Dict, List, Optional
 import requests
 
 
-import os
-from pathlib import Path
-
 BASE_URL = "https://api.scrapecreators.com/v1/youtube/video/comments"
+API_KEY = "H8O9EXtOlceiWYhOExkCyJvMP0z1"
 VIDEO_URL = "https://www.youtube.com/watch?v=t_HtRmlKCVI"
 ORDER = "top"
-
-# Load API key from environment variable
-def get_api_key() -> str:
-    """Read the API key from environment variables."""
-    api_key = os.getenv("SCRAPECREATORS_API_KEY")
-    if not api_key:
-        raise RuntimeError(
-            "Environment variable SCRAPECREATORS_API_KEY is not set. "
-            "Store your key in .env file or export it before running."
-        )
-    return api_key
 
 
 def fetch_comment_pages(
@@ -70,10 +57,9 @@ def fetch_comment_pages(
 
 
 def main() -> None:
-    api_key = get_api_key()
     pages = fetch_comment_pages(
         video_url=VIDEO_URL,
-        api_key=api_key,
+        api_key=API_KEY,
         order=ORDER,
         start_token=None,
         max_pages=None,
@@ -96,7 +82,7 @@ def main() -> None:
             all_comments.extend(comments)
 
     suffix = ORDER if ORDER else "default"
-    output_path = f"comments_{suffix}.jsonl"
+    output_path = f"/Users/assan/Desktop/coding/bkn_sn_analysis/comments_{suffix}.jsonl"
     with open(output_path, "w", encoding="utf-8") as fh:
         for comment in all_comments:
             fh.write(json.dumps(comment, ensure_ascii=False) + "\n")
