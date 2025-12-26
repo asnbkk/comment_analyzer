@@ -1,0 +1,39 @@
+{
+  "model_name": "kaz_roberta_toxic_kz",
+  "base_model": "kz-transformers/kaz-roberta-conversational",
+  "trained_at_utc": "2025-12-26T11:36:01.000617+00:00",
+  "labels": [
+    "toxic",
+    "obscene",
+    "threat",
+    "insult",
+    "hate"
+  ],
+  "num_labels": 5,
+  "test_metrics": {
+    "eval_loss": 1.1176395416259766,
+    "eval_micro_f1": 0.6344294003868471,
+    "eval_micro_precision": 0.5754385964912281,
+    "eval_micro_recall": 0.7068965517241379,
+    "eval_macro_f1": 0.4669314094497306,
+    "eval_macro_precision": 0.4203582350371341,
+    "eval_macro_recall": 0.5421824421824422,
+    "eval_f1_toxic": 0.7341772151898734,
+    "eval_f1_obscene": 0.3076923076923077,
+    "eval_f1_threat": 0.2962962962962963,
+    "eval_f1_insult": 0.6631578947368421,
+    "eval_f1_hate": 0.3333333333333333,
+    "eval_runtime": 0.1253,
+    "eval_samples_per_second": 2401.624,
+    "eval_steps_per_second": 79.788,
+    "epoch": 7.0
+  },
+  "training_config": {
+    "learning_rate": 2e-05,
+    "batch_size": 16,
+    "num_epochs": 10,
+    "max_length": 128,
+    "seed": 42
+  },
+  "data_file": "C:\\Users\\marin\\OneDrive\\Desktop\\coding\\comment_analyzer\\data\\golden_annotated_merged.csv"
+}

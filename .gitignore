@@ -77,6 +77,13 @@ violence_ft/
 !tsconfig.json
 !docker-compose.yml
 !*.config.json
+!models/**/config.json
+!models/**/tokenizer*.json
+!models/**/special_tokens_map.json
+!models/**/vocab.json
+!models/**/meta.json
+!models/**/merges.txt
+!models/**/*.txt
 
 # Database
 *.db
