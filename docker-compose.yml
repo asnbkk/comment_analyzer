@@ -1,0 +1,14 @@
+services:
+  lang_detect:
+    build: ./services/lang_detect
+    ports:
+      - "8000:8000"
+    environment:
+      MODEL_PATH: /models/langid_ru_kk_model.pkl
+      MODEL_META_PATH: /models/meta.json
+      MIN_LEN: "5"
+      PROBA_THRESHOLD: "0.60"
+      RETURN_PROBA: "1"
+    volumes:
+      - ./models/lang_detect:/models:ro
+    restart: unless-stopped
